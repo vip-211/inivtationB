@@ -9,6 +9,7 @@
   const script = document.currentScript;
   const dark = (script && script.dataset.theme) === "dark";
   const FILE = (script && script.dataset.file) || "music.mp3";
+  const MODE = (script && script.dataset.mode) || "ambient";   // "om" = Om chant
   const LOW = (script && script.dataset.low) === "1";   // lower, calmer pitch
 
   /* ---------- button ---------- */
@@ -61,11 +62,75 @@
   }
   function fade(a, to) { const t = setInterval(() => { a.volume = Math.max(0, Math.min(1, a.volume + (to > a.volume ? .03 : -.03))); if (Math.abs(a.volume - to) < .04) { a.volume = to; clearInterval(t); } }, 60); }
 
+
+  /* ---------- Om chant (synthesised voice: "O" -> "M") ---------- */
+  // Schedules one chant of "Om" on audio context `c` into node `out`, starting at time T.
+  function omCycle(c, out, T, f0) {
+    f0 = f0 || 98;                                   // ~G2, a deep chanting pitch
+    const dur = 12.2;
+    // source: two detuned saws + a sub, gentle vibrato, slight pitch sag into "m"
+    const mix = c.createGain(); mix.gain.value = 1;
+    const vib = c.createOscillator(); vib.frequency.value = 5.1;
+    const vibG = c.createGain(); vibG.gain.value = 1.6; vib.connect(vibG);
+    [[f0, -7, "sawtooth", .16], [f0, 7, "sawtooth", .16], [f0 / 2, 0, "triangle", .22]].forEach(([f, det, type, g]) => {
+      const o = c.createOscillator(); o.type = type;
+      o.frequency.setValueAtTime(f, T); o.frequency.linearRampToValueAtTime(f * .97, T + dur - 2);
+      o.detune.value = det; vibG.connect(o.frequency);
+      const gg = c.createGain(); gg.gain.value = g; o.connect(gg); gg.connect(mix);
+      o.start(T); o.stop(T + dur + .2);
+    });
+    vib.start(T); vib.stop(T + dur + .2);
+    // vocal tract: three formants moving from "O" to "M"
+    const voice = c.createGain();
+    const lp = c.createBiquadFilter(); lp.type = "lowpass";
+    lp.frequency.setValueAtTime(3800, T); lp.frequency.setValueAtTime(3800, T + 5.6); lp.frequency.linearRampToValueAtTime(700, T + 7.4);
+    lp.connect(voice); voice.connect(out);
+    [[560, 260, 1.0, 1.5, 9], [880, 1050, .55, .08, 10], [2500, 2200, .18, 0, 12]].forEach(([fo, fm, go, gm, q]) => {
+      const bp = c.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = q;
+      bp.frequency.setValueAtTime(fo, T); bp.frequency.setValueAtTime(fo, T + 5.6); bp.frequency.linearRampToValueAtTime(fm, T + 7.2);
+      const g = c.createGain();
+      g.gain.setValueAtTime(go, T); g.gain.setValueAtTime(go, T + 5.6); g.gain.linearRampToValueAtTime(gm, T + 7.2);
+      mix.connect(bp); bp.connect(g); g.connect(lp);
+    });
+    // loudness: soft attack, sustained "O", held "M", slow fade
+    voice.gain.setValueAtTime(0, T);
+    voice.gain.linearRampToValueAtTime(1, T + 1.6);
+    voice.gain.setValueAtTime(1, T + 7);
+    voice.gain.linearRampToValueAtTime(.85, T + 9.6);
+    voice.gain.linearRampToValueAtTime(0, T + dur);
+    return T + dur;
+  }
+  function reverb(c) {
+    const len = Math.floor(c.sampleRate * 3.6), ir = c.createBuffer(2, len, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+    const cv = c.createConvolver(); cv.buffer = ir; return cv;
+  }
+  function omStart() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctx = ctx || new AC(); ctx.resume && ctx.resume();
+    master = ctx.createGain(); master.gain.value = 0;
+    const comp = ctx.createDynamicsCompressor(); master.connect(comp); comp.connect(ctx.destination);
+    master.gain.linearRampToValueAtTime(3.4, ctx.currentTime + 2);
+    const bus = ctx.createGain(); const wet = ctx.createGain(); wet.gain.value = .6; const dry = ctx.createGain(); dry.gain.value = .8;
+    const rv = reverb(ctx); bus.connect(dry); dry.connect(master); bus.connect(rv); rv.connect(wet); wet.connect(master);
+    let next = ctx.currentTime + .2;
+    (function loopOm() {
+      if (!ctx || ctx.state === "closed") return;
+      const end = omCycle(ctx, bus, next);
+      next = end + 1.6;                                   // short breath between chants
+      timer = setTimeout(loopOm, Math.max(500, (next - 12.5 - ctx.currentTime) * 1000));
+    })();
+    return true;
+  }
+  window.__OmChant = { omCycle, reverb };
+
   /* ---------- built-in ambience ---------- */
   let ctx = null, master = null, timer = null, nodes = [];
   const SA = LOW ? 110 : 130.81;                                   // A2 / C3
   const SCALE = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3].map(r => r * SA * 4); // pentatonic, 2 octaves up
   function synthStart() {
+    if (MODE === "om") return omStart();
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
     ctx = ctx || new AC();

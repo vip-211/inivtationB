@@ -4,8 +4,8 @@
 const CONFIG = {
   title: "Bhandara (Maha Prasad)",
   // India time (+05:30). Format: YYYY-MM-DDTHH:MM:SS+05:30   (SAMPLE time — change to the real one)
-  start: "2026-11-30T12:00:00+05:30",
-  end:   "2026-11-30T17:00:00+05:30",
+  start: "2026-11-29T12:00:00+05:30",
+  end:   "2026-11-29T17:00:00+05:30",
 
   mapQuery: "Saiganj, Bharwari, Kaushambi, Uttar Pradesh 212201",
   mapLink:  "https://maps.app.goo.gl/A7dbLdtiYjcigoPo9",
@@ -17,9 +17,9 @@ const CONFIG = {
   // SAMPLE program — change to the real schedule
   icons: ["🙏", "🪔", "🍛", "🤝"],
   timeline: [
-    { t: "30 Nov · 11:00 AM", th: "30 नवं · प्रातः 11:00 बजे",  h: "Pooja & Aarti", hh: "पूजा एवं आरती",   d: "Begins with prayers and aarti",         dh: "प्रार्थना और आरती से शुभारंभ" },
-    { t: "30 Nov · 12:00 PM", th: "30 नवं · दोपहर 12:00 बजे", h: "Maha Prasad",   hh: "महाप्रसाद",       d: "Bhandara prasad is served to all",      dh: "सभी के लिए भंडारा प्रसाद" },
-    { t: "30 Nov · 3:00 PM",  th: "30 नवं · दोपहर 3:00 बजे",  h: "Closing Aarti", hh: "समापन आरती",      d: "Blessings and thanks to all devotees",  dh: "सभी श्रद्धालुओं को आशीर्वाद एवं धन्यवाद" }
+    { t: "29 Nov · 11:00 AM", th: "29 नवं · प्रातः 11:00 बजे",  h: "Pooja & Aarti", hh: "पूजा एवं आरती",   d: "Begins with prayers and aarti",         dh: "प्रार्थना और आरती से शुभारंभ" },
+    { t: "29 Nov · 12:00 PM", th: "29 नवं · दोपहर 12:00 बजे", h: "Maha Prasad",   hh: "महाप्रसाद",       d: "Bhandara prasad is served to all",      dh: "सभी के लिए भंडारा प्रसाद" },
+    { t: "29 Nov · 3:00 PM",  th: "29 नवं · दोपहर 3:00 बजे",  h: "Closing Aarti", hh: "समापन आरती",      d: "Blessings and thanks to all devotees",  dh: "सभी श्रद्धालुओं को आशीर्वाद एवं धन्यवाद" }
   ]
 };
 
@@ -36,7 +36,7 @@ $("#call").href = "tel:+" + CONFIG.phone;
 $("#call2").href = "tel:+" + CONFIG.phone2;
 if (CONFIG.whatsapp) {
   const w = $("#wa"); w.hidden = false;
-  w.href = `https://wa.me/${CONFIG.phone}?text=${enc("Jai Siya Ram! We will attend the Bhandara on 30th November 2026. 🙏")}`;
+  w.href = `https://wa.me/${CONFIG.phone}?text=${enc("Jai Siya Ram! We will attend the Bhandara on 29th November 2026. 🙏")}`;
 }
 
 /* ---------- program ---------- */
@@ -61,7 +61,7 @@ $("#ics").href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }))
 
 /* ---------- share ---------- */
 $("#share").addEventListener("click", async () => {
-  const data = { title: "Bhandara Invitation", text: "You're invited to the Bhandara on 30th Nov 2026 🪔", url: location.href };
+  const data = { title: "Bhandara Invitation", text: "You're invited to the Bhandara on 29th Nov 2026 🪔", url: location.href };
   try {
     if (navigator.share) await navigator.share(data);
     else { await navigator.clipboard.writeText(location.href); $("#share").textContent = LANG === "hi" ? "लिंक कॉपी हुआ ✓" : "Link copied ✓"; }
@@ -163,7 +163,7 @@ const HI = {
   tap: "दीपक जलाने के लिए छुएँ",
   jai: "॥ जय सियाराम ॥", jai2: "॥ सादर आमंत्रण ॥",
   bhsub: "महाप्रसाद", inv: "आप सादर आमंत्रित हैं",
-  day: "सोमवार", my: "नवंबर · 2026",
+  day: "रविवार", my: "नवंबर · 2026",
   where: "सैगंज, भरवारी, कौशाम्बी",
   gcal: "📅&nbsp; तारीख सहेजें", ics: "कैलेंडर में जोड़ें (.ics)",
   mt: "निमंत्रण",
@@ -172,13 +172,13 @@ const HI = {
   cdt: "भंडारे की उल्टी गिनती", days: "दिन", hours: "घंटे", mins: "मिनट", secs: "सेकंड",
   prog: "कार्यक्रम", venue: "स्थान",
   vname: "सैगंज, भरवारी", vaddr: "कौशाम्बी<br>उत्तर प्रदेश – 212201, भारत",
-  vdate: "सोमवार, 30 नवंबर 2026",
+  vdate: "रविवार, 29 नवंबर 2026",
   dir: "➤&nbsp; रास्ता देखें", mapb: "गूगल मैप में खोलें",
   tip: "सुझाव: “रास्ता देखें” दबाएँ, गूगल मैप आपकी वर्तमान जगह से मार्ग बताएगा।",
   orgT: "आयोजक", o1: "सियाराम चौरसिया", o2: "सचिन चौरसिया", o3: "गुरु प्रसाद चौरसिया",
   orgNote: "अधिक जानकारी के लिए कॉल करें",
   call: "📞&nbsp; कॉल करें 97699 11052", call2: "📞&nbsp; कॉल करें 97931 81562", wa: "💬&nbsp; व्हाट्सऐप पर पुष्टि करें", share: "निमंत्रण साझा करें",
-  foot: "भंडारा · 30.11.2026",
+  foot: "भंडारा · 29.11.2026",
   credit: "विकसित एवं संचालित: <b>विपिन सी</b>"
 };
 function applyLang(l) {
@@ -191,7 +191,7 @@ function applyLang(l) {
   });
   renderTL(l, true);
   document.querySelectorAll(".lang button").forEach(b => b.classList.toggle("on", b.dataset.l === l));
-  document.title = l === "hi" ? "भंडारा निमंत्रण · 30 नवंबर 2026" : "Bhandara Invitation · 30 November 2026";
+  document.title = l === "hi" ? "भंडारा निमंत्रण · 29 नवंबर 2026" : "Bhandara Invitation · 29 November 2026";
   try { localStorage.setItem("lang", l); } catch (e) {}
 }
 document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => applyLang(b.dataset.l)));
