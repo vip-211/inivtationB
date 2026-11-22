@@ -11,6 +11,7 @@ const CONFIG = {
   mapLink:  "https://maps.app.goo.gl/A7dbLdtiYjcigoPo9",
 
   phone: "919769911052",          // used for Call + WhatsApp buttons
+  phone2: "919793181562",         // second Call button
   whatsapp: true,                  // false hides the WhatsApp button
 
   // SAMPLE program — change to the real schedule
@@ -32,6 +33,7 @@ $("#mapFrame").src = `https://www.google.com/maps?q=${enc(CONFIG.mapQuery)}&z=15
 $("#dirBtn").href = `https://www.google.com/maps/dir/?api=1&destination=${enc(CONFIG.mapQuery)}&travelmode=driving`;
 $("#mapBtn").href = CONFIG.mapLink;
 $("#call").href = "tel:+" + CONFIG.phone;
+$("#call2").href = "tel:+" + CONFIG.phone2;
 if (CONFIG.whatsapp) {
   const w = $("#wa"); w.hidden = false;
   w.href = `https://wa.me/${CONFIG.phone}?text=${enc("Jai Siya Ram! We will attend the Bhandara on 30th November 2026. 🙏")}`;
@@ -48,13 +50,13 @@ renderTL("en", false);
 
 /* ---------- calendar ---------- */
 const fmt = d => new Date(d).toISOString().replace(/[-:]|\.\d{3}/g, "");
-const details = `Bhandara (Maha Prasad) organised by Siyaram Chaurasiya, Sachin Chaurasiya & Guru Prasad Chaurasiya. Call 9769911052.\nVenue: ${CONFIG.mapQuery}`;
+const details = `Bhandara (Maha Prasad) organised by Siyaram Chaurasiya, Sachin Chaurasiya & Guru Prasad Chaurasiya. Call 9769911052 / 9793181562.\nVenue: ${CONFIG.mapQuery}`;
 $("#gcal").href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(CONFIG.title)}&dates=${fmt(CONFIG.start)}/${fmt(CONFIG.end)}&details=${enc(details)}&location=${enc(CONFIG.mapQuery)}`;
 const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bhandara//EN", "BEGIN:VEVENT",
   `UID:bhandara-${fmt(CONFIG.start)}@invite`, `DTSTAMP:${fmt(new Date())}`,
   `DTSTART:${fmt(CONFIG.start)}`, `DTEND:${fmt(CONFIG.end)}`,
   `SUMMARY:${CONFIG.title}`, `LOCATION:${CONFIG.mapQuery}`,
-  "DESCRIPTION:Bhandara - organised by Chaurasiya family. Call 9769911052", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  "DESCRIPTION:Bhandara - organised by Chaurasiya family. Call 9769911052 / 9793181562", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
 $("#ics").href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
 
 /* ---------- share ---------- */
@@ -175,7 +177,7 @@ const HI = {
   tip: "सुझाव: “रास्ता देखें” दबाएँ, गूगल मैप आपकी वर्तमान जगह से मार्ग बताएगा।",
   orgT: "आयोजक", o1: "सियाराम चौरसिया", o2: "सचिन चौरसिया", o3: "गुरु प्रसाद चौरसिया",
   orgNote: "अधिक जानकारी के लिए कॉल करें",
-  call: "📞&nbsp; कॉल करें 97699 11052", wa: "💬&nbsp; व्हाट्सऐप पर पुष्टि करें", share: "निमंत्रण साझा करें",
+  call: "📞&nbsp; कॉल करें 97699 11052", call2: "📞&nbsp; कॉल करें 97931 81562", wa: "💬&nbsp; व्हाट्सऐप पर पुष्टि करें", share: "निमंत्रण साझा करें",
   foot: "भंडारा · 30.11.2026",
   credit: "विकसित एवं संचालित: <b>विपिन सी</b>"
 };
